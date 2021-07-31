@@ -18,7 +18,7 @@ public class PlayerControl : MonoBehaviour
     {
         MovePlayer();
         Shoot();
-        if (playerHealth == 0)
+        if (playerHealth <= 0)
         {
             GameOver();
         }
