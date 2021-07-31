@@ -39,7 +39,7 @@ public class Enemy : MonoBehaviour
             playerDistance = Vector3.Distance(playerpos, this.transform.position);
             
             
-            if (playerDistance <= 2)
+            if (playerDistance <= 3)
             {
                 _Agent.isStopped = true;
             }
@@ -49,7 +49,7 @@ public class Enemy : MonoBehaviour
             enemyIsAlive = false;
             EnemyDeath();
         }
-        if (canAttack && playerDistance < 3)
+        if (canAttack && playerDistance <= 3)
         {
             Debug.Log("Attacking Player");
             AddDamage(enemyAttack);
