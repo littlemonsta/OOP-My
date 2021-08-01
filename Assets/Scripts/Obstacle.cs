@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
-    public int health = 10;
+    public int health = 50;
     // Start is called before the first frame update
     void Start()
     {

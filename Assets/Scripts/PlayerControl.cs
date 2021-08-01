@@ -5,12 +5,19 @@ using UnityEngine;
 public class PlayerControl : MonoBehaviour
 {
     [SerializeField] float _MoveSpeed = 10.0f;
-    public GameObject bulletprefab;
+    [SerializeField] private GameObject bulletprefab;
+    private Transform gunend;
     public int playerHealth;
+    public static float minZ = -2f;
+    public static float maxZ = 50f;
+    public static float minX = -18f;
+    public static float maxX = 18f;
+
     // Start is called before the first frame update
     void Awake()
     {
         playerHealth = 100;
+        gunend = GameObject.Find("gunend").transform;
     }
 
     // Update is called once per frame
@@ -31,13 +38,32 @@ public class PlayerControl : MonoBehaviour
 
         transform.Translate(Vector3.forward * verticalMove * Time.deltaTime * _MoveSpeed);
         transform.Translate(Vector3.right * horizontalMove * Time.deltaTime * _MoveSpeed);
+
+        //keep player in bounds
+        if (transform.position.z < minZ)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, minZ);
+        }
+        if (transform.position.z > maxZ)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, maxZ);
+        }
+        if (transform.position.x < minX)
+        {
+            transform.position = new Vector3(minX, transform.position.y, transform.position.z);
+        }
+        if (transform.position.x > maxX)
+        {
+            transform.position = new Vector3(maxX, transform.position.y, transform.position.z);
+        }
+
     }
 
     void Shoot()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Instantiate(bulletprefab, transform.position, bulletprefab.transform.rotation);
+            Instantiate(bulletprefab, gunend.transform.position, bulletprefab.transform.rotation);
         }
     }
 

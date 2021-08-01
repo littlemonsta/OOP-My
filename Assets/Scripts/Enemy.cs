@@ -19,7 +19,7 @@ public class Enemy : MonoBehaviour
     public float attackDelay =1.5f;
     public int enemyHealth;
     private bool isColObstacle = false;
-
+    
     // Start is called before the first frame update
     protected void Start()
     {
@@ -62,7 +62,7 @@ public class Enemy : MonoBehaviour
     {
         enemyAttack = 3;
         attackDelay = 1.5f;
-        enemyHealth = 5;
+        enemyHealth = 3;
 }
 
     public void UpdateAgentSpeed()
@@ -84,6 +84,23 @@ public class Enemy : MonoBehaviour
         if (playerDistance <= 3)
         {
             _Agent.isStopped = true;
+        }
+
+        if (transform.position.z < PlayerControl.minZ)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, PlayerControl.minZ);
+        }
+        if (transform.position.z > PlayerControl.maxZ)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, PlayerControl.maxZ);
+        }
+        if (transform.position.x < PlayerControl.minX)
+        {
+            transform.position = new Vector3(PlayerControl.minX, transform.position.y, transform.position.z);
+        }
+        if (transform.position.x > PlayerControl.maxX)
+        {
+            transform.position = new Vector3(PlayerControl.maxX, transform.position.y, transform.position.z);
         }
     }
     void EnemyDeath()
@@ -123,7 +140,7 @@ public class Enemy : MonoBehaviour
         if (collision.gameObject.CompareTag("Obstacle"))
         {
             isColObstacle = true;
-            obstacle = GetComponent<Obstacle>();
+            obstacle = collision.gameObject.GetComponent<Obstacle>();
             Debug.Log("coliided obstacle" + obstacle.health);
         }
     }
