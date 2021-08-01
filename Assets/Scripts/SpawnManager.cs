@@ -1,38 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class SpawnManager : MonoBehaviour
 {
-    private int waveNumber=0;
+    private int waveNumber = 0;
     [SerializeField] private int maxSpawn = 15;
     [SerializeField] private GameObject gruntPrefab;
     [SerializeField] private GameObject runnerPrefab;
     [SerializeField] private GameObject tankPrefab;
-    private float delaySpawn = 5 ;
+    private float delaySpawn = 7f;
     private int enemyOnField;
     private int runnerCount=0;
     private int tankCount=0;
-    bool canSpawn = true;
+    bool canSpawn = false;
     int spawnCount =100 ;
+    private AudioSource spawnAudio;
+    [SerializeField] private AudioClip prepare;
+    [SerializeField] private TextMeshProUGUI wavetext;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        spawnAudio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         
         
         enemyOnField = GameObject.FindGameObjectsWithTag("Enemy").Length;
         if (enemyOnField == 0 && (spawnCount>=maxSpawn))
-        {   
-            
-            waveNumber++;
+        {
+
+            WaveLoad();
             runnerCount = 0;
             tankCount = 0;
             spawnCount = 0;
@@ -40,7 +44,7 @@ public class SpawnManager : MonoBehaviour
             tankCount = 0;
             maxSpawn += 5;
             SpawnMobs();
-            Debug.Log("wavenumber :"+waveNumber);
+            //Debug.Log("wavenumber :"+waveNumber);
 
         }
 
@@ -50,11 +54,21 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    void WaveLoad()
+    {
+        waveNumber++;
+        wavetext.text = "Wave " + waveNumber;
+        wavetext.gameObject.SetActive(true);
+        spawnAudio.PlayOneShot(prepare);
+        StartCoroutine(SpawnDelay(5f));
+        
+
+    }
     void SpawnMobs()
     {
-        
-            if (canSpawn)
-            {
+         
+                if (canSpawn)
+                 {
                 canSpawn = false;
                 for (int j = 0; j < 5; j++)
                 {
@@ -76,16 +90,17 @@ public class SpawnManager : MonoBehaviour
                      spawnCount++;
                     tankCount++;
                 }
-                StartCoroutine(SpawnDelay());
+                StartCoroutine(SpawnDelay(delaySpawn));
             Debug.Log("z pos =" + transform.position.z);
         }
         
     }
 
-    IEnumerator SpawnDelay()
+    IEnumerator SpawnDelay(float delay)
     {
-        yield return new WaitForSeconds(delaySpawn);
-        Debug.Log("i did pause");
+        yield return new WaitForSeconds(delay);
+        Debug.Log("i did pause "+delay);
+        wavetext.gameObject.SetActive(false);
         canSpawn = true;
     }
 }

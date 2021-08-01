@@ -9,8 +9,8 @@ public class Enemy : MonoBehaviour
     public NavMeshAgent _Agent;
     public PlayerControl player;
     public Obstacle obstacle;
-    private float navSpeed = 3.0f;
-    public float _Speed = 1;
+    private float navSpeed = 3.5f;
+    public float _Speed = 2f;
     float playerDistance;
 
     private bool canAttack = true;
@@ -25,7 +25,8 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     protected void Start()
     {
-           _Agent = GetComponent<NavMeshAgent>();
+            _Speed = 2f;
+            _Agent = GetComponent<NavMeshAgent>();
             player = GameObject.Find("Player").GetComponent<PlayerControl>();
             UpdateAgentSpeed();
             UpdateEnemyData();
@@ -47,7 +48,7 @@ public class Enemy : MonoBehaviour
         }
         if (canAttack && playerDistance <= 3)
         {
-            Debug.Log("Attacking Player");
+            //Debug.Log("Attacking Player");
             AddDamage(enemyAttack);
             StartCoroutine(AttackCooldown());
         }
@@ -63,11 +64,11 @@ public class Enemy : MonoBehaviour
             timeToCheck = Time.time + timeToCheck;
             if (!_Agent.hasPath && _Agent.pathStatus == NavMeshPathStatus.PathComplete)
             {
-                Debug.Log("Character stuck");
+                //Debug.Log("Character stuck");
                 _Agent.enabled = false;
                 _Agent.enabled = true;
                 MoveEnemy();
-                Debug.Log("navmesh re enabled");
+                //Debug.Log("navmesh re enabled");
             }
 
         }
@@ -76,10 +77,11 @@ public class Enemy : MonoBehaviour
 
     public virtual void UpdateEnemyData()
     {
-        enemyAttack = 3;
+        enemyAttack = 5;
         attackDelay = 1.5f;
-        enemyHealth = 3;
-}
+        enemyHealth = 2;
+        
+    }
 
     public void UpdateAgentSpeed()
     {
@@ -122,7 +124,7 @@ public class Enemy : MonoBehaviour
     void EnemyDeath()
     {
         Destroy(gameObject, 0.2f);
-        Debug.Log("enemy died");
+        //Debug.Log("enemy died");
     }
 
     IEnumerator AttackCooldown()
@@ -134,13 +136,13 @@ public class Enemy : MonoBehaviour
 
     void AddDamage (int Damage)
     {
-        Debug.Log("Deducting playerhealth"+ player.playerHealth);
+       // Debug.Log("Deducting playerhealth"+ player.playerHealth);
         player.playerHealth -= Damage;
     }
 
       void AddDamageObstacle (int Damage)
     {
-        Debug.Log("Deducting obstacle"+ obstacle.health);
+        //Debug.Log("Deducting obstacle"+ obstacle.health);
         obstacle.health -= Damage;
         isColObstacle = false;
     }

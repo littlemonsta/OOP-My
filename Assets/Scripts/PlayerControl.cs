@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerControl : MonoBehaviour
 {
@@ -12,11 +13,14 @@ public class PlayerControl : MonoBehaviour
     public static float maxZ = 50f;
     public static float minX = -19f;
     public static float maxX = 19f;
+    private AudioSource playerAudio;
+    [SerializeField] private AudioClip gunfire;
 
     // Start is called before the first frame update
     void Awake()
     {
-        playerHealth = 100;
+        playerHealth = 50;
+        playerAudio = GetComponent<AudioSource>();
         gunend = GameObject.Find("gunend").transform;
     }
 
@@ -64,11 +68,15 @@ public class PlayerControl : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Instantiate(bulletprefab, gunend.transform.position, bulletprefab.transform.rotation);
+            playerAudio.PlayOneShot(gunfire,0.6f);
         }
     }
 
     void GameOver()
     {
-        Debug.Log("You have died");
+        //Debug.Log("You have died");
+        SceneManager.LoadScene("GameOver");
+
     }
+
 }

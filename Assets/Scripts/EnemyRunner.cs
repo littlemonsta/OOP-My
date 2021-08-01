@@ -8,7 +8,7 @@ public class EnemyRunner : Enemy
     public void Start()
     {
         base.Start();
-        _Speed = 3f;
+        _Speed = 4f;
         UpdateAgentSpeed();
         //UpdateEnemyData();
         
@@ -23,7 +23,7 @@ public class EnemyRunner : Enemy
 
     public override void UpdateEnemyData()
     {
-        enemyHealth = 1;
+        enemyHealth = 2;
         attackDelay = 2;
         enemyAttack = 10;
     }

@@ -7,7 +7,7 @@ public class Tank : Enemy
     public void Start()
     {
         base.Start();
-        _Speed = 0.7f;
+        _Speed = 1.5f;
         UpdateAgentSpeed();
         //UpdateEnemyData();
 
@@ -22,7 +22,7 @@ public class Tank : Enemy
 
     public override void UpdateEnemyData()
     {
-        enemyHealth = 20;
+        enemyHealth = 10;
         attackDelay = 2.5f;
         enemyAttack = 15;
     }
