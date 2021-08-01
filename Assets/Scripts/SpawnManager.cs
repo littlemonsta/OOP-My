@@ -5,15 +5,16 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     private int waveNumber=0;
-    [SerializeField] private int maxSpawn = 20;
+    [SerializeField] private int maxSpawn = 15;
     [SerializeField] private GameObject gruntPrefab;
     [SerializeField] private GameObject runnerPrefab;
     [SerializeField] private GameObject tankPrefab;
-    private float delaySpawn = 10 ;
+    private float delaySpawn = 5 ;
     private int enemyOnField;
     private int runnerCount=0;
     private int tankCount=0;
     bool canSpawn = true;
+    int spawnCount =100 ;
 
 
     // Start is called before the first frame update
@@ -28,57 +29,56 @@ public class SpawnManager : MonoBehaviour
         
         
         enemyOnField = GameObject.FindGameObjectsWithTag("Enemy").Length;
-        if (enemyOnField == 0)
+        if (enemyOnField == 0 && (spawnCount>=maxSpawn))
         {   
             
             waveNumber++;
             runnerCount = 0;
             tankCount = 0;
+            spawnCount = 0;
+            runnerCount = 0;
+            tankCount = 0;
+            maxSpawn += 5;
+            SpawnMobs();
+            Debug.Log("wavenumber :"+waveNumber);
+
+        }
+
+        if (spawnCount < maxSpawn)
+        {
             SpawnMobs();
         }
     }
 
     void SpawnMobs()
     {
-        for (int i = 0; i < maxSpawn / 10; i++)
-        {
-            //pause every 10 spawn enemies
-            //i 
-
-            for (int j = 0; j < 5; j++)
+        
+            if (canSpawn)
             {
-                Instantiate(gruntPrefab, transform.position, gruntPrefab.transform.rotation);
-            }
-            StartCoroutine(SpawnDelay());
-
-        }
-/*
-                if (j == 9)
+                canSpawn = false;
+                for (int j = 0; j < 5; j++)
                 {
-                    StartCoroutine(SpawnDelay());
+                    int randomize = Random.Range(-18, 18);
+                    Instantiate(gruntPrefab, new Vector3(randomize,transform.position.y,transform.position.z), gruntPrefab.transform.rotation);
+                    spawnCount++;
                 }
-                
-                if (waveNumber > 1 && runnerCount <= waveNumber)
+                if (waveNumber > 1 && runnerCount< waveNumber)
                 {
-                    Instantiate(runnerPrefab, transform.position, runnerPrefab.transform.rotation);
-                    i++;
+                    int randomize = Random.Range(-18, 18);
+                    Instantiate(runnerPrefab, new Vector3(randomize, transform.position.y, transform.position.z), runnerPrefab.transform.rotation);
+                    spawnCount++;
                     runnerCount++;
                 }
-                else if (waveNumber > 2 && tankCount <= waveNumber)
+                if (waveNumber > 2 && tankCount < waveNumber)
                 {
-                    Instantiate(tankPrefab, transform.position, tankPrefab.transform.rotation);
+                    int randomize = Random.Range(-18, 18);
+                    Instantiate(tankPrefab, new Vector3(randomize, transform.position.y, transform.position.z), tankPrefab.transform.rotation);
+                     spawnCount++;
                     tankCount++;
-                    i++;
                 }
-                Debug.Log("j is " + j);
-                
-                
-            }
-
-
-
-            Instantiate(gruntPrefab, transform.position, gruntPrefab.transform.rotation);
-            Debug.Log("i is " + i);*/
+                StartCoroutine(SpawnDelay());
+            Debug.Log("z pos =" + transform.position.z);
+        }
         
     }
 
@@ -86,5 +86,6 @@ public class SpawnManager : MonoBehaviour
     {
         yield return new WaitForSeconds(delaySpawn);
         Debug.Log("i did pause");
+        canSpawn = true;
     }
 }

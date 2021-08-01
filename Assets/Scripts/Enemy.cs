@@ -19,6 +19,8 @@ public class Enemy : MonoBehaviour
     public float attackDelay =1.5f;
     public int enemyHealth;
     private bool isColObstacle = false;
+    private float timeToCheck = 8f;
+    private float time;
     
     // Start is called before the first frame update
     protected void Start()
@@ -32,7 +34,7 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     protected void Update()
     {
-        
+        time = Time.time;
         
         if (player !=null)
         {
@@ -56,6 +58,20 @@ public class Enemy : MonoBehaviour
             StartCoroutine(AttackCooldown());
         }
 
+        if (time>timeToCheck)
+        {
+            timeToCheck = Time.time + timeToCheck;
+            if (!_Agent.hasPath && _Agent.pathStatus == NavMeshPathStatus.PathComplete)
+            {
+                Debug.Log("Character stuck");
+                _Agent.enabled = false;
+                _Agent.enabled = true;
+                MoveEnemy();
+                Debug.Log("navmesh re enabled");
+            }
+
+        }
+       
     }
 
     public virtual void UpdateEnemyData()
@@ -90,9 +106,9 @@ public class Enemy : MonoBehaviour
         {
             transform.position = new Vector3(transform.position.x, transform.position.y, PlayerControl.minZ);
         }
-        if (transform.position.z > PlayerControl.maxZ)
+        if (transform.position.z > 100)
         {
-            transform.position = new Vector3(transform.position.x, transform.position.y, PlayerControl.maxZ);
+            transform.position = new Vector3(transform.position.x, transform.position.y, 100);
         }
         if (transform.position.x < PlayerControl.minX)
         {

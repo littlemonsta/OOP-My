@@ -10,8 +10,8 @@ public class PlayerControl : MonoBehaviour
     public int playerHealth;
     public static float minZ = -2f;
     public static float maxZ = 50f;
-    public static float minX = -18f;
-    public static float maxX = 18f;
+    public static float minX = -19f;
+    public static float maxX = 19f;
 
     // Start is called before the first frame update
     void Awake()
