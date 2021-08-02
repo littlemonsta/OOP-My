@@ -5,6 +5,7 @@ using TMPro;
 
 public class SpawnManager : MonoBehaviour
 {
+    //ENCAPSULATION
     [SerializeField] private int maxSpawn = 15;
     [SerializeField] private GameObject gruntPrefab;
     [SerializeField] private GameObject runnerPrefab;
@@ -50,7 +51,7 @@ public class SpawnManager : MonoBehaviour
             SpawnMobs();
         }
     }
-
+    //ABSTRACTION
     void WaveLoad()
     {
         waveNumber++;

@@ -9,7 +9,7 @@ public class Tank : Enemy
         base.Start();
         _Speed = 1.5f;
         UpdateAgentSpeed();
-        //UpdateEnemyData();
+        
 
     }
 

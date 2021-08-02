@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : MonoBehaviour, IGameObjectPooled
 {
     [SerializeField] float _Speed = 100;
     [SerializeField] float _BulletRange = 50;
-
+    public GameObjectPool Pool { get; set; }
     Vector3 launchPos;
     // Start is called before the first frame update
     void Start()
@@ -24,7 +24,9 @@ public class Bullet : MonoBehaviour
         //Debug.Log("bullet travel " + distanceTravel);
         if (distanceTravel > _BulletRange)
         {
-            Destroy(gameObject);
+            //BulletPool.Instance.ReturnBullets(this);
+            //Destroy(gameObject);
+            Pool.ReturnObjectsToPool(this.gameObject);
         }
     }
 
@@ -34,17 +36,31 @@ public class Bullet : MonoBehaviour
         {
             //Debug.Log("Enemy hit");
             collision.gameObject.SendMessage("EnemyHit");
-            Destroy(gameObject);
+            gameObject.SetActive(false);
+            //BulletPool.Instance.ReturnBullets(this);
+            Pool.ReturnObjectsToPool(this.gameObject);
+
 
         }
         if (collision.gameObject.CompareTag("Obstacle"))
         {
             //Debug.Log("Obstacle hit");
             collision.gameObject.SendMessage("ObstacleHit");
-            Destroy(gameObject);
+            //Destroy(gameObject);
+            gameObject.SetActive(false);
+            //BulletPool.Instance.ReturnBullets(this);
+            Pool.ReturnObjectsToPool(this.gameObject);
 
 
         }
 
     }
 }
+
+ internal interface IGameObjectPooled
+    {
+        GameObjectPool Pool { get; set; }
+    }
+    
+
+

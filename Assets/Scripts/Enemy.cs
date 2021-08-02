@@ -16,6 +16,8 @@ public class Enemy : MonoBehaviour
     public int enemyHealth;
     private float navSpeed = 3.5f;
     private float time;
+    private float enemyMaxZ = 100f;
+    private float enemyMinZ = 0f;
     public float TimeToCheck { get; set; }
     private float playerDistance;
 
@@ -122,13 +124,13 @@ public class Enemy : MonoBehaviour
             _Agent.isStopped = true;
         }
 
-        if (transform.position.z < PlayerControl.minZ)
+        if (transform.position.z < enemyMinZ)
         {
-            transform.position = new Vector3(transform.position.x, transform.position.y, PlayerControl.minZ);
+            transform.position = new Vector3(transform.position.x, transform.position.y, enemyMinZ);
         }
-        if (transform.position.z > 100)
+        if (transform.position.z > enemyMaxZ)
         {
-            transform.position = new Vector3(transform.position.x, transform.position.y, 100);
+            transform.position = new Vector3(transform.position.x, transform.position.y, enemyMaxZ);
         }
         if (transform.position.x < PlayerControl.minX)
         {

@@ -236,7 +236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _MoveSpeed: 10
-  bulletprefab: {fileID: 3466159316569801111, guid: 404271125c1467c49a72d5e3bf2ece12, type: 3}
+  bulletprefab: {fileID: 0}
   playerHealth: 0
   gunfire: {fileID: 8300000, guid: 749058d4a65dc3c43970b71fe085ec95, type: 3}
 --- !u!54 &73123522
@@ -2194,6 +2194,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1856149821}
+  - component: {fileID: 1856149822}
   m_Layer: 0
   m_Name: gunend
   m_TagString: Untagged
@@ -2215,6 +2216,19 @@ Transform:
   m_Father: {fileID: 73123520}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1856149822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1856149820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2594d9ed067d81745b90b4becdb8c534, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectPrefab: {fileID: 3466159316569801111, guid: 404271125c1467c49a72d5e3bf2ece12, type: 3}
 --- !u!1 &1867837659 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 535861946948034645, guid: 05ccde3f84a6c9e48960c221f110a7f3, type: 3}

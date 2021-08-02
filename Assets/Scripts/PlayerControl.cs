@@ -24,6 +24,7 @@ public class PlayerControl : MonoBehaviour
         gunend = GameObject.Find("gunend").transform;
     }
 
+  
     // Update is called once per frame
     void Update()
     {
@@ -67,7 +68,14 @@ public class PlayerControl : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Instantiate(bulletprefab, gunend.transform.position, bulletprefab.transform.rotation);
+            var bullet = GameObjectPool.Instance.Get();
+            if (bullet != null)
+            {
+                    bullet.transform.position = gunend.transform.position;
+                    bullet.gameObject.SetActive(true);
+            }
+          
+            //Instantiate(bulletprefab, gunend.transform.position, bulletprefab.transform.rotation);
             playerAudio.PlayOneShot(gunfire,0.6f);
         }
     }
