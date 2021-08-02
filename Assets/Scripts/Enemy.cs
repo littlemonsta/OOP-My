@@ -9,18 +9,33 @@ public class Enemy : MonoBehaviour
     public NavMeshAgent _Agent;
     public PlayerControl player;
     public Obstacle obstacle;
-    private float navSpeed = 3.5f;
     public float _Speed = 2f;
-    float playerDistance;
-
-    private bool canAttack = true;
     public bool enemyIsAlive = true;
     public int enemyAttack = 3;
     public float attackDelay =1.5f;
     public int enemyHealth;
-    private bool isColObstacle = false;
-    private float timeToCheck = 8f;
+    private float navSpeed = 3.5f;
     private float time;
+    public float TimeToCheck { get; set; }
+    private float playerDistance;
+
+    private bool canAttack = true;
+    private bool isColObstacle = false;
+    
+    
+    //ENCAPSULATION
+    private float _attackDistance;
+    public float GetAttackDistance()
+    {
+        return (_attackDistance);
+    }
+
+    public void SetAttackDistance(float i)
+    {
+        _attackDistance = i;
+    }
+
+
     
     // Start is called before the first frame update
     protected void Start()
@@ -30,6 +45,9 @@ public class Enemy : MonoBehaviour
             player = GameObject.Find("Player").GetComponent<PlayerControl>();
             UpdateAgentSpeed();
             UpdateEnemyData();
+            SetAttackDistance(3);
+            TimeToCheck=7;
+
     }
 
     // Update is called once per frame
@@ -46,7 +64,7 @@ public class Enemy : MonoBehaviour
             //enemyIsAlive = false;
             EnemyDeath();
         }
-        if (canAttack && playerDistance <= 3)
+        if (canAttack && playerDistance <= GetAttackDistance())
         {
             //Debug.Log("Attacking Player");
             AddDamage(enemyAttack);
@@ -58,10 +76,10 @@ public class Enemy : MonoBehaviour
             AddDamageObstacle(enemyAttack);
             StartCoroutine(AttackCooldown());
         }
-
-        if (time>timeToCheck)
+        // check if nav agent is stuck
+        if (time>TimeToCheck)
         {
-            timeToCheck = Time.time + timeToCheck;
+            TimeToCheck = Time.time + TimeToCheck;
             if (!_Agent.hasPath && _Agent.pathStatus == NavMeshPathStatus.PathComplete)
             {
                 //Debug.Log("Character stuck");
@@ -74,7 +92,7 @@ public class Enemy : MonoBehaviour
         }
        
     }
-
+    // Polymorphism
     public virtual void UpdateEnemyData()
     {
         enemyAttack = 5;
@@ -99,7 +117,7 @@ public class Enemy : MonoBehaviour
         playerDistance = Vector3.Distance(playerpos, this.transform.position);
 
 
-        if (playerDistance <= 3)
+        if (playerDistance < GetAttackDistance())
         {
             _Agent.isStopped = true;
         }
@@ -149,7 +167,7 @@ public class Enemy : MonoBehaviour
 
     public void EnemyHit()
     {
-        Debug.Log("Deducting enemyhealth"+enemyHealth);
+        //Debug.Log("Deducting enemyhealth"+enemyHealth);
         enemyHealth--;
     }
 
@@ -159,7 +177,7 @@ public class Enemy : MonoBehaviour
         {
             isColObstacle = true;
             obstacle = collision.gameObject.GetComponent<Obstacle>();
-            Debug.Log("coliided obstacle" + obstacle.health);
+            //Debug.Log("coliided obstacle" + obstacle.health);
         }
     }
 

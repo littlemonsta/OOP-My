@@ -5,20 +5,22 @@ using TMPro;
 
 public class SpawnManager : MonoBehaviour
 {
-    private int waveNumber = 0;
     [SerializeField] private int maxSpawn = 15;
     [SerializeField] private GameObject gruntPrefab;
     [SerializeField] private GameObject runnerPrefab;
     [SerializeField] private GameObject tankPrefab;
+    [SerializeField] private AudioClip prepare;
+    [SerializeField] private TextMeshProUGUI wavetext;
+
     private float delaySpawn = 7f;
     private int enemyOnField;
     private int runnerCount=0;
     private int tankCount=0;
-    bool canSpawn = false;
-    int spawnCount =100 ;
+    private bool canSpawn = false;
+    private int spawnCount =100 ;
     private AudioSource spawnAudio;
-    [SerializeField] private AudioClip prepare;
-    [SerializeField] private TextMeshProUGUI wavetext;
+    private int waveNumber = 0;
+    private int spawnWidth = 18;
 
 
     // Start is called before the first frame update
@@ -37,12 +39,7 @@ public class SpawnManager : MonoBehaviour
         {
 
             WaveLoad();
-            runnerCount = 0;
-            tankCount = 0;
-            spawnCount = 0;
-            runnerCount = 0;
-            tankCount = 0;
-            maxSpawn += 5;
+            InitializeCounters();
             SpawnMobs();
             //Debug.Log("wavenumber :"+waveNumber);
 
@@ -61,8 +58,16 @@ public class SpawnManager : MonoBehaviour
         wavetext.gameObject.SetActive(true);
         spawnAudio.PlayOneShot(prepare);
         StartCoroutine(SpawnDelay(5f));
-        
+    }
 
+    void InitializeCounters()
+    {
+        runnerCount = 0;
+        tankCount = 0;
+        spawnCount = 0;
+        runnerCount = 0;
+        tankCount = 0;
+        maxSpawn += 5;
     }
     void SpawnMobs()
     {
@@ -72,26 +77,26 @@ public class SpawnManager : MonoBehaviour
                 canSpawn = false;
                 for (int j = 0; j < 5; j++)
                 {
-                    int randomize = Random.Range(-18, 18);
+                    int randomize = Random.Range(-spawnWidth, spawnWidth);
                     Instantiate(gruntPrefab, new Vector3(randomize,transform.position.y,transform.position.z), gruntPrefab.transform.rotation);
                     spawnCount++;
                 }
                 if (waveNumber > 1 && runnerCount< waveNumber)
                 {
-                    int randomize = Random.Range(-18, 18);
+                    int randomize = Random.Range(-spawnWidth, spawnWidth);
                     Instantiate(runnerPrefab, new Vector3(randomize, transform.position.y, transform.position.z), runnerPrefab.transform.rotation);
                     spawnCount++;
                     runnerCount++;
                 }
                 if (waveNumber > 2 && tankCount < waveNumber)
                 {
-                    int randomize = Random.Range(-18, 18);
+                    int randomize = Random.Range(-spawnWidth, spawnWidth);
                     Instantiate(tankPrefab, new Vector3(randomize, transform.position.y, transform.position.z), tankPrefab.transform.rotation);
                      spawnCount++;
                     tankCount++;
                 }
                 StartCoroutine(SpawnDelay(delaySpawn));
-            Debug.Log("z pos =" + transform.position.z);
+            //Debug.Log("z pos =" + transform.position.z);
         }
         
     }
@@ -99,7 +104,7 @@ public class SpawnManager : MonoBehaviour
     IEnumerator SpawnDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        Debug.Log("i did pause "+delay);
+        //Debug.Log("i did pause "+delay);
         wavetext.gameObject.SetActive(false);
         canSpawn = true;
     }

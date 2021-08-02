@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+//INHERITENCE
 public class EnemyRunner : Enemy
 {
     // Start is called before the first frame update
@@ -20,7 +20,7 @@ public class EnemyRunner : Enemy
         base.Update();
 
     }
-
+    //POLYMORPHISM
     public override void UpdateEnemyData()
     {
         enemyHealth = 2;
