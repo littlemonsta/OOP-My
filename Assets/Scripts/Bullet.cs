@@ -4,31 +4,65 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour, IGameObjectPooled
 {
-    [SerializeField] float _Speed = 100;
+    [SerializeField] float _Speed = 100f;
     [SerializeField] float _BulletRange = 50;
+    private Rigidbody bulletRB;
     public GameObjectPool Pool { get; set; }
     Vector3 launchPos;
-    // Start is called before the first frame update
-    void Start()
+    Vector3 hitPos;
+    [SerializeField] private bool isMoving;
+    float timeOnScreen;
+    float currentTime;
+
+  
+
+    private void OnEnable()
     {
-        launchPos = transform.position;
+       
+        bulletRB = GetComponent<Rigidbody>();
+        bulletRB.angularVelocity = Vector3.zero;
+        bulletRB.velocity = Vector3.zero;
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        //Vector3 launchPos = transform.position;
-        transform.Translate(Vector3.up * Time.deltaTime * _Speed);
+        if (!isMoving)
+        {
+           
+            bulletRB.isKinematic = false;
+            launchPos = transform.position;
+            timeOnScreen = Time.time;
+            hitPos = GameObject.Find("Player").GetComponent<PlayerControl>().hitDirection;
+            isMoving = true;
+            Debug.DrawLine(launchPos, hitPos, Color.red, 3 );
+        }
+        currentTime = Time.time;
+        transform.Translate(Vector3.up* _Speed * Time.deltaTime);
+        //bulletRB.AddForce(hitPos * _Speed);
         float distanceTravel = transform.position.z - launchPos.z;
+        if (currentTime - timeOnScreen >3)
+        {
+            this.gameObject.SetActive(false);
+            bulletRB.isKinematic = true;
+            Pool.ReturnObjectsToPool(this.gameObject);
+            isMoving = false;
+        }
 
-        //Debug.Log("bullet travel " + distanceTravel);
+        
         if (distanceTravel > _BulletRange)
         {
             //BulletPool.Instance.ReturnBullets(this);
-            //Destroy(gameObject);
+            this.gameObject.SetActive(false);
+            bulletRB.isKinematic = true;
             Pool.ReturnObjectsToPool(this.gameObject);
+            isMoving = false;
         }
+
+
     }
+    
+ 
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -36,21 +70,23 @@ public class Bullet : MonoBehaviour, IGameObjectPooled
         {
             //Debug.Log("Enemy hit");
             collision.gameObject.SendMessage("EnemyHit");
-            gameObject.SetActive(false);
+            this.gameObject.SetActive(false);
+            bulletRB.isKinematic = true;
             //BulletPool.Instance.ReturnBullets(this);
             Pool.ReturnObjectsToPool(this.gameObject);
-
+            isMoving = false;
 
         }
         if (collision.gameObject.CompareTag("Obstacle"))
         {
-            //Debug.Log("Obstacle hit");
+            Debug.Log("Obstacle hit");
             collision.gameObject.SendMessage("ObstacleHit");
             //Destroy(gameObject);
-            gameObject.SetActive(false);
+            bulletRB.isKinematic = true;
+            this.gameObject.SetActive(false);
             //BulletPool.Instance.ReturnBullets(this);
             Pool.ReturnObjectsToPool(this.gameObject);
-
+            isMoving = false;
 
         }
 

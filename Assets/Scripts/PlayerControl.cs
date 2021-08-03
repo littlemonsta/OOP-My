@@ -7,6 +7,9 @@ public class PlayerControl : MonoBehaviour
 {
     [SerializeField] float _MoveSpeed = 10.0f;
     [SerializeField] private GameObject bulletprefab;
+    [SerializeField] LayerMask cantAimHere;
+    public Camera fpscamera;
+
     private Transform gunend;
     public int playerHealth;
     public static float minZ = -2f;
@@ -15,12 +18,16 @@ public class PlayerControl : MonoBehaviour
     public static float maxX = 19f;
     private AudioSource playerAudio;
     [SerializeField] private AudioClip gunfire;
+    private Animator _animator;
+    public Vector3 hitDirection;
 
     // Start is called before the first frame update
     void Awake()
     {
         playerHealth = 50;
+        _animator = GetComponent<Animator>();
         playerAudio = GetComponent<AudioSource>();
+        fpscamera = GetComponentInChildren<Camera>();
         gunend = GameObject.Find("gunend").transform;
     }
 
@@ -28,6 +35,7 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        AimToMouse();
         MovePlayer();
         Shoot();
         if (playerHealth <= 0)
@@ -40,9 +48,23 @@ public class PlayerControl : MonoBehaviour
     {
         float verticalMove = Input.GetAxis("Vertical");
         float horizontalMove = Input.GetAxis("Horizontal");
+        Vector3 movement = new Vector3(horizontalMove, 0, verticalMove);
 
-        transform.Translate(Vector3.forward * verticalMove * Time.deltaTime * _MoveSpeed);
-        transform.Translate(Vector3.right * horizontalMove * Time.deltaTime * _MoveSpeed);
+        if (movement.magnitude>0)
+        {
+            movement.Normalize();
+            movement *= _MoveSpeed * Time.deltaTime;
+            transform.Translate(movement, Space.World);
+        }
+
+        float velocityZ = Vector3.Dot(movement.normalized, transform.forward);
+        float velocityX = Vector3.Dot(movement.normalized, transform.right);
+        _animator.SetFloat("VelocityZ", velocityZ, 0.1f, Time.deltaTime);
+        _animator.SetFloat("VelocityX", velocityX, 0.1f, Time.deltaTime);
+
+
+        //transform.Translate(Vector3.forward * verticalMove * Time.deltaTime * _MoveSpeed);
+        //transform.Translate(Vector3.right * horizontalMove * Time.deltaTime * _MoveSpeed);
 
         //keep player in bounds
         if (transform.position.z < minZ)
@@ -68,23 +90,56 @@ public class PlayerControl : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            var bullet = GameObjectPool.Instance.Get();
-            if (bullet != null)
+            var bulletpool = GameObjectPool.Instance.Get();
+            if (bulletpool != null)
             {
-                    bullet.transform.position = gunend.transform.position;
-                    bullet.gameObject.SetActive(true);
+                bulletpool.transform.position = gunend.transform.position;
+                bulletpool.gameObject.SetActive(true);
+
+                
+                RaycastHit hit;
+
+                Ray ray2 = fpscamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
+                if (Physics.Raycast(ray2, out hit))
+                {
+                    hitDirection = hit.point;
+                }
+                else
+                {
+                    hitDirection = ray2.GetPoint(80);
+
+                }
+                hitDirection.y = gunend.position.y;
+                
+                Debug.DrawRay(gunend.transform.position, hitDirection);
+                Vector3 tmpBull = hitDirection - gunend.transform.position;
+                bulletpool.gameObject.transform.up = tmpBull.normalized;
             }
-          
+
             //Instantiate(bulletprefab, gunend.transform.position, bulletprefab.transform.rotation);
             playerAudio.PlayOneShot(gunfire,0.6f);
         }
     }
+
 
     void GameOver()
     {
         //Debug.Log("You have died");
         SceneManager.LoadScene("GameOver");
 
+    }
+
+    void AimToMouse()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out var hitinfo, Mathf.Infinity, cantAimHere))
+        {
+            var direction = hitinfo.point - transform.position;
+            direction.y = 0;
+            direction.Normalize();
+            //hitDirection = hitinfo.point;
+            transform.forward = direction;
+        }
     }
 
 }
