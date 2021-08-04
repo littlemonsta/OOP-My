@@ -1,13 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
+
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class PlayerControl : MonoBehaviour
 {
-    [SerializeField] float _MoveSpeed = 10.0f;
+    [SerializeField] float _MoveSpeed = 5f;
     [SerializeField] private GameObject bulletprefab;
     [SerializeField] LayerMask cantAimHere;
+    [SerializeField] float canShootTimer = 0.2f;
+    [SerializeField] private TextMeshProUGUI bulletText;
     public Camera fpscamera;
 
     private Transform gunend;
@@ -20,6 +22,8 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private AudioClip gunfire;
     private Animator _animator;
     public Vector3 hitDirection;
+    private float timershot =0;
+    private int numberOfBullets = 10;
 
     // Start is called before the first frame update
     void Awake()
@@ -35,13 +39,23 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+        timershot += Time.deltaTime;
         AimToMouse();
         MovePlayer();
-        Shoot();
+        if (timershot>canShootTimer && numberOfBullets>0)
+        {
+            Shoot();
+        }
+
+        if (numberOfBullets <= 0) { bulletText.text = "R TO RELOAD"; }
+        
         if (playerHealth <= 0)
         {
             GameOver();
         }
+        Reload();
+      
     }
 
     void MovePlayer()
@@ -86,6 +100,15 @@ public class PlayerControl : MonoBehaviour
 
     }
 
+    void Reload()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            numberOfBullets = 10;
+            bulletText.text = "Bullets :" + numberOfBullets;
+        }
+    }
+
     void Shoot()
     {
         if (Input.GetMouseButtonDown(0))
@@ -111,13 +134,16 @@ public class PlayerControl : MonoBehaviour
                 }
                 hitDirection.y = gunend.position.y;
                 
-                Debug.DrawRay(gunend.transform.position, hitDirection);
+                //Debug.DrawRay(gunend.transform.position, hitDirection);
                 Vector3 tmpBull = hitDirection - gunend.transform.position;
                 bulletpool.gameObject.transform.up = tmpBull.normalized;
             }
 
             //Instantiate(bulletprefab, gunend.transform.position, bulletprefab.transform.rotation);
-            playerAudio.PlayOneShot(gunfire,0.6f);
+            playerAudio.PlayOneShot(gunfire,0.8f);
+            timershot = 0;
+            numberOfBullets--;
+            bulletText.text = "Bullets :" + numberOfBullets;
         }
     }
 

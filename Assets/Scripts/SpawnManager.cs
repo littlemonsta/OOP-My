@@ -12,6 +12,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private GameObject tankPrefab;
     [SerializeField] private AudioClip prepare;
     [SerializeField] private TextMeshProUGUI wavetext;
+    [SerializeField] private TextMeshProUGUI enemytext;
 
     private float delaySpawn = 7f;
     private int enemyOnField;
@@ -36,6 +37,7 @@ public class SpawnManager : MonoBehaviour
         
         
         enemyOnField = GameObject.FindGameObjectsWithTag("Enemy").Length;
+        enemytext.text = "Enemies Left :" + enemyOnField;
         if (enemyOnField == 0 && (spawnCount>=maxSpawn))
         {
 
